@@ -1,24 +1,51 @@
-# ui-vue2x
+![npm](https://img.shields.io/npm/v/vue2-syara-ui)
+![npm](https://img.shields.io/npm/dw/vue2-syara-ui)
+![NPM](https://img.shields.io/npm/l/vue2-syara-ui)
 
-## Project setup
-```
-npm install
-```
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+# Syara UI Tools
 
-### Compiles and minifies for production
-```
-npm run build
-```
+User interface tools for web applications
 
-### Lints and fixes files
-```
-npm run lint
+## Requirements
+* vue 2.x
+
+## Installation
+
+``` bash
+npm install syara-ui-vue
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Usage
+
+Register all available components with Vue.use
+``` js
+// main.js
+import Vue from 'vue'
+
+import SyaraUi from 'syara-ui-vue'
+import 'syara-ui-vue/dist/syara-ui.css'
+
+Vue.use(SyaraUi)
+
+```
+
+## Components 
+
+Click on component's name to see the documentation (if available)
+
+| Name | Type | Status |
+| ------- | ----- | :-------: | 
+| [SyTable](https://ui.syara.app/vue/components/table.html) | table | Ok |
+| SyForm | form | X |
+| SyButton | button | X |
+| SyChart | charts | X |
+| SyIcon | svg icons | X |
+
+
+
+
+
+## More information
+
+[SyaraUI Docs](https://ui.syara.app/)
