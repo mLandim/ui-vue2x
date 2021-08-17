@@ -20,9 +20,9 @@ let syaraUi = (Vue) => {
 const install = syaraUi
 
 // Module definition for Vue.use()
-const plugin = {
-  install,
-}
+// const plugin = {
+//   install,
+// }
 
 export default {
   install
