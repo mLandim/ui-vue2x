@@ -87,17 +87,37 @@
           <template v-if="body">
 
             <!-- table line in v-for (loop) -->
-            <tr v-for="(line, indexLine) in finalBodyData" :key="indexLine">
+            <tr v-for="(line, indexLine) in finalBodyData" :key="indexLine" @click="lineClick ? clickLink(lineClick, line) : null" :style="lineClick ? 'cursor: pointer;' : ''">
 
               <td v-for="column in insideHeader" :key="column.id" :class="{'td-hover':column.asc!=null}" :style="column.style">
                 <!-- text and action for each cell in line  -->
-                <template v-if="column.actions.length > 0">
-                  <div v-for="(action, actionIndex) in column.actions" :key="actionIndex" class="syara-table-actions">
-                    <span class="syara-table-actions-info" v-if="'info' in action">{{line[action.info]}}</span>
-                    <div class="syara-table-actions-icon" v-if="'icon' in action" v-html="action.icon" @click="clickLink(action.callback, line)"></div>
-                    <div class="syara-table-actions-icon" v-if="'materialIcon' in action" @click="clickLink(action.callback, line)"><span class="material-icons">{{action.materialIcon}}</span></div>
+                <template v-if="'actions' in column && column.actions.length > 0">
+                  <div class="syara-table-actions-container">
+                    <div v-for="(action, actionIndex) in column.actions" :key="actionIndex" class="syara-table-actions"  @click="clickLink(action.callback, line)">
+                      <span class="syara-table-actions-info" v-if="'info' in action">{{line[action.info]}}</span>
+                      <div class="syara-table-actions-icon" v-if="'icon' in action" v-html="action.icon"></div>
+                      <div class="syara-table-actions-icon" v-if="'mdIcon' in action">
+                        <span class="material-icons" :class="('mdIconSize' in action) ? `md-${action.mdIconSize}` : null">{{action.mdIcon}}</span>
+                      </div>
+                    </div>
                   </div>
                 </template>
+
+                <template v-else-if="'labels' in column && column.labels.length > 0">
+                  <div class="syara-table-labels-container">
+                    <div v-for="(label, labelIndex) in column.labels" :key="labelIndex" class="syara-table-labels" :style="'color' in label ? `background-color: ${label.color}`: null" >
+                      <span 
+                      v-if="'byIndex' in label && label.byIndex && labelsList" 
+                      class="syara-table-label-index" 
+                      :class="labelsList ? 'tooltip-host': null" 
+                      :tool-tip-attr="labelsList ? labelsList[line[label.field]] : ''">
+                      {{line[label.field]}}
+                      </span>
+                      <span v-else>{{line[label.field]}}</span>
+                    </div>
+                  </div>
+                </template>
+
                 <!-- text for each cell in line  -->
                 <template v-else>{{line[column.field]}}</template>
 
@@ -322,6 +342,18 @@ export default {
       // Sum field : TODO
       sumField: {
         type: String,
+        required: false,
+        default: null
+      },
+      // Callback function when line is clicked 
+      lineClick: {
+        type: String,
+        required: false,
+        default: null
+      },
+      // List of labels that could be used at column with labels key
+      labelsList: {
+        type: Object,
         required: false,
         default: null
       }
@@ -797,10 +829,11 @@ export default {
       clickLink(callbackFunction, line){
           console.log('Syara Table > clickLink')
           if (callbackFunction && line) {
-            this.$emit('actionCallbackFunctions', [callbackFunction, line])
-          } else {
-            console.log('Error: No callback function defined or line empty')
-          }
+            this.$emit('callbackFunctions', [callbackFunction, line])
+          } 
+          // else {
+          //   console.log('Error: No callback function defined or line empty')
+          // }
           
       },
 
@@ -842,6 +875,12 @@ Material Icons
   /* Support for IE. */
   font-feature-settings: 'liga';
 }
+
+.material-icons.md-16 { font-size: 16px; }
+.material-icons.md-18 { font-size: 18px; }
+.material-icons.md-24 { font-size: 24px; }
+.material-icons.md-36 { font-size: 36px; }
+.material-icons.md-48 { font-size: 48px; }
 
 /******************************************************
 
@@ -916,6 +955,7 @@ table thead tr th {
 }
 table tbody tr td {
   padding: 3px;
+  word-wrap: break-word;
 }
 
 
@@ -945,18 +985,52 @@ table tbody tr td {
   box-sizing: border-box;
 }
 
+.syara-table-actions-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
 .syara-table-actions {
   position: relative;
   display: flex;
-  width: 100%;
-  gap: 4px;
+  /* gap: 4px; */
   justify-content: center;
   align-content: center;
   align-items: center;
   cursor: pointer;
-
+  margin: 0 3px;
+}
+.syara-table-actions:hover span {
+  color: #00B5E5;
+}
+.syara-table-actions:hover svg {
+  fill: #00B5E5;
 }
 
+.syara-table-actions-info {
+  margin-right: 3px;
+}
+.syara-table-actions-icon {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+.syara-table-actions-icon:hover svg {
+  fill: #00B5E5;
+}
+
+.syara-table-actions-icon:hover span {
+  color: #00B5E5;
+}
 
 .syara-table-actions:hover svg {
   fill: #00B5E5;
@@ -966,6 +1040,115 @@ table tbody tr td {
 .syara-table-actions-icon svg:hover {
   fill: #00B5E5;
   
+}
+
+.syara-table-labels-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.syara-table-labels {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  padding: 3px 6px;
+  border-radius: 6px;
+  background: #3A4859;
+  color: #ffffff;
+  margin: 0 2px;
+}
+
+/* .syara-table-label-index::after {
+  content: attr(tool-tip-attr);
+} */
+
+.tooltip-host::after {
+  display: none;
+  transition: display 0.2s;
+}
+
+/* table tbody tr td .syara-table-labels:hover .tooltip-host::after {
+  content: attr(tool-tip-attr);
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  bottom: calc(100% + 16px);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 60px;
+  width: auto;
+  background: #3A4859;
+  border-radius: 6px;
+  color: #ffffff;
+  padding: 4px 8px;
+  opacity: 0.9;
+  z-index: 10;
+}
+
+table tbody tr td .syara-table-labels:hover .tooltip-host::before {
+    content:'';
+    display:block;
+    width:0;
+    height:0;
+    position: absolute;
+    border-top: 8px solid #3A4859 ;
+    border-bottom: 8px solid transparent  ;
+    border-right: 8px solid transparent ;
+    border-left: 8px solid transparent ;
+    opacity: 0.9; 
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+} */
+/* :first-of-type */
+table tbody tr td .syara-table-labels:hover .tooltip-host::after {
+  content: attr(tool-tip-attr);
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  clear: both;
+  top: calc(103% + 16px);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 60px;
+  width: auto;
+  height: auto;
+  background: #3A4859;
+  border-radius: 6px;
+  color: #ffffff;
+  padding: 4px 8px;
+  opacity: 0.9;
+  z-index: 10;
+}
+
+table tbody tr td .syara-table-labels:hover .tooltip-host::before  {
+  content:'';
+  display:block;
+  width:0;
+  height:0;
+  position: absolute;
+  border-top: 8px solid transparent ;
+  border-bottom: 8px solid #3A4859   ;
+  border-right: 8px solid transparent ;
+  border-left: 8px solid transparent ;
+  opacity: 0.9; 
+  top: 103%;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 
@@ -1178,7 +1361,8 @@ tbody styles
     min-height: 30px;
     max-height: auto;
     max-width: 300px;
-    overflow: hidden;
+    /* overflow: hidden; */
+    /* word-wrap: break-word; */
     padding: 10px 3px;
     font-size: 1em;
 }
