@@ -2,6 +2,7 @@
   <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
   <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
   <div class="table-container">
+
       <SyTable 
       :header="tHeader" 
       :body="tBody" 
@@ -34,7 +35,7 @@ export default {
         {text: 'Id', field: 'id', filter: true, asc: true},
         {text: 'Album Id', field: 'albumId', filter: true },
         {text: 'Title', field: 'title', filter: true },
-        {text: 'Url', field: 'url', filter: true},
+        {text: 'Url', field: 'url', filter: true, help:'Digite ! no início para usar o filtro invertido'},
         {text: 'Thumb', field: 'thumbnailUrl', filter: true},
         {text: 'Actions', actions:[
           {
@@ -165,5 +166,6 @@ export default {
 
 .table-container {
   font-size: 11px;
+  padding: 40px;
 }
 </style>

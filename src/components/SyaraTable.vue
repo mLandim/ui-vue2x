@@ -20,7 +20,12 @@
             <!-- wrapper div for column  -->
             <div>
               <!-- column filter  -->
-              <div class="header-filter" v-if="'filter' in column && column.filter">
+              <div 
+              class="header-filter" 
+              v-if="'filter' in column && column.filter" 
+              :class="{'header-tooltip' : 'help' in column && column.help.length > 0}"
+              :attr-tooltip-text="'help' in column && column.help.length ? column.help : ''"
+              >
                 <input type="text" v-model="column.filterText" :placeholder="column.filterPlaceholder">
               </div>
               <div class="header-empty" v-else></div>
@@ -720,7 +725,12 @@ export default {
       },
 
       filterString(filter, target){
-        return target.toString().toUpperCase().includes(filter.toString().toUpperCase())
+        if (filter.charAt(0) === '!') {
+          return target.toString().toUpperCase().includes(filter.toString().replace('!', '').toUpperCase()) === false
+        } else {
+          return target.toString().toUpperCase().includes(filter.toString().toUpperCase())
+        }
+        
       },
 
       filterBody(bodyReceived) {
@@ -1197,6 +1207,46 @@ table tbody tr td .syara-table-labels:hover .tooltip-host::before  {
   transform: translateX(-50%);
 }
 
+.header-tooltip{
+  position: relative;
+}
+
+.header-tooltip:hover::after{
+  content: attr(attr-tooltip-text);
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  bottom: calc(100% + 16px);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 100%;
+  width: auto;
+  background: #3A4859;
+  border-radius: 6px;
+  color: #ffffff;
+  padding: 4px 8px;
+  opacity: 0.9;
+  z-index: 10;
+}
+.header-tooltip:hover::before {
+    content:'';
+    display:block;
+    width:0;
+    height:0;
+    position: absolute;
+    border-top: 8px solid #3A4859 ;
+    border-bottom: 8px solid transparent  ;
+    border-right: 8px solid transparent ;
+    border-left: 8px solid transparent ;
+    opacity: 0.9; 
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+} 
+
 
 .footer-pages {
 
@@ -1296,8 +1346,11 @@ thead styles
 }
 
 .syara-light > thead > tr > th.th > div > .header-filter{
-    display: block;
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
     border: 1px solid #D0E0E3;
     border-radius: 4px;
     text-align: center;
@@ -1305,7 +1358,7 @@ thead styles
     height: 24px;
     line-height: 24px;
     width: 100%;
-    padding: 2px 5px;
+    padding: 2px 1px;
     margin-bottom: 5px;
     font-family: 'Futura Normal', Helvetica, Arial, sans-serif;
     
@@ -1335,7 +1388,7 @@ thead styles
 .syara-light > thead > tr > th.th > div > .header-filter > input{
     display: block;
     position: relative;
-    width: 100% ;
+    width: calc(100% - 3px);
     border: 0;
     outline: none;
     height: 16px;
