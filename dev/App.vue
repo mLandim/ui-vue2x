@@ -74,7 +74,7 @@ export default {
             {
               field: 'albumId', byIndex:true, 
               mapValues:{
-                1: {text:'Labels 1: test 1 just ot see if this could work', color: 'red'},
+                1: {text:'Labels 1: test 1 just ot see if this could work', color: '#EFF5F6'},
                 2: {text:'test 2'},
                 3: {text:'test 3'},
                 4: {text:'test 4'}

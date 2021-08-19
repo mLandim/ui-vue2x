@@ -112,7 +112,8 @@
                         <!-- show text by id in label itself  -->
                         <span 
                         v-if="label.byIndex && ('tooltipText' in label === false || label.tooltipText === false)" 
-                        class="syara-table-label-index" :style="label.mapValues && `${line[label.field]}` in label.mapValues && 'color' in label.mapValues[line[label.field]] ? `background-color:${label.mapValues[line[label.field]].color}`: ''"
+                        class="syara-table-label-index" 
+                        :style="label.mapValues && `${line[label.field]}` in label.mapValues && 'color' in label.mapValues[line[label.field]] ? `background-color:${label.mapValues[line[label.field]].color};color:${fontColorFix(label.mapValues[line[label.field]].color)}`: ''"
                         >
                         {{label.mapValues && `${line[label.field]}` in label.mapValues ? label.mapValues[line[label.field]].text : ' '}}
                         </span>
@@ -501,7 +502,25 @@ export default {
     },
     methods:{
 
-      
+      fontColorFix(backgroundColor) {
+
+        // if (this.value === 0) return '#3A4859'
+
+        if (backgroundColor.charAt(0) !== '#' ) return '#FFFFFF'
+
+        let hex1 = backgroundColor.substr(1,2)
+        let hex2 = backgroundColor.substr(3,2)
+        let hex3 = backgroundColor.substr(5,2)
+
+        let dec1 = parseInt(hex1, 16)
+        let dec2 = parseInt(hex2, 16)
+        let dec3 = parseInt(hex3, 16)
+
+        let sumAve = dec1 + dec2 + dec3
+
+        return (sumAve > 400) ? '#3A4859' : '#FFFFFF'
+
+      },
       // Prepare header and body
 
       setupHeader(){
