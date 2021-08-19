@@ -105,15 +105,30 @@
 
                 <template v-else-if="'labels' in column && column.labels.length > 0">
                   <div class="syara-table-labels-container">
-                    <div v-for="(label, labelIndex) in column.labels" :key="labelIndex" class="syara-table-labels" :style="'color' in label ? `background-color: ${label.color}`: null" >
-                      <span 
-                      v-if="'byIndex' in label && label.byIndex && labelsList" 
-                      class="syara-table-label-index" 
-                      :class="labelsList ? 'tooltip-host': null" 
-                      :tool-tip-attr="labelsList ? labelsList[line[label.field]] : ''">
-                      {{line[label.field]}}
-                      </span>
-                      <span v-else>{{line[label.field]}}</span>
+
+                    <div v-for="(label, labelIndex) in column.labels" :key="labelIndex" class="syara-table-labels"  >
+                      
+                      <template v-if="('byIndex' in label || 'tooltipText' in label) && labelsList">
+                        <!-- show text by id in label itself  -->
+                        <span 
+                        v-if="label.byIndex && ('tooltipText' in label === false || label.tooltipText === false)" 
+                        class="syara-table-label-index" :style="labelsList && `${line[label.field]}` in labelsList && 'color' in labelsList[line[label.field]] ? `background-color:${labelsList[line[label.field]].color}`: ''"
+                        >
+                        {{labelsList && `${line[label.field]}` in labelsList ? labelsList[line[label.field]].text : ' '}}
+                        </span>
+                        <!-- text tooltip only  -->
+                        <span 
+                        v-else-if="label.byIndex && label.tooltipText" 
+                        class="syara-table-label-index" 
+                        :class="labelsList ? 'tooltip-host': null" 
+                        :tool-tip-attr="labelsList && `${line[label.field]}` in labelsList  ? labelsList[line[label.field]].text : ' '">
+                        {{line[label.field]}}
+                        </span>
+
+                      </template>
+                      <!-- show only the value of field  -->
+                      <span v-else :style="'color' in label ? `background-color: ${label.color}`: null">{{line[label.field]}}</span>
+
                     </div>
                   </div>
                 </template>
@@ -1053,7 +1068,7 @@ table tbody tr td {
   box-sizing: border-box;
 }
 
-.syara-table-labels {
+.syara-table-labels span{
   position: relative;
   display: flex;
   justify-content: center;
@@ -1066,9 +1081,20 @@ table tbody tr td {
   margin: 0 2px;
 }
 
-/* .syara-table-label-index::after {
-  content: attr(tool-tip-attr);
-} */
+
+.syara-table-label-index {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  padding: 3px 6px;
+  border-radius: 6px;
+  background: #3A4859;
+  color: #ffffff;
+  margin: 0 2px;
+}
+
 
 .tooltip-host::after {
   display: none;

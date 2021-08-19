@@ -55,7 +55,13 @@ export default {
         ] 
         },
         {
-          text: 'Labels',
+          text: 'Labels 0',
+          labels: [
+            {field: 'albumId', byIndex:true, tooltipText: true}
+          ]
+        },
+        {
+          text: 'Labels 1',
           labels: [
             {field: 'albumId', byIndex:true}
           ]
@@ -78,10 +84,10 @@ export default {
       loading: false,
       
       tooltipList: {
-        1: 'test 1 just ot see if this could work',
-        2: 'test 2',
-        3: 'test 3',
-        4: 'test 4'
+        1: {text:'test 1 just ot see if this could work', color: 'red'},
+        2: {text:'test 2'},
+        3: {text:'test 3'},
+        4: {text:'test 4'}
       }
 
     }

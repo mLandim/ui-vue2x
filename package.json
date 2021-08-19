@@ -1,6 +1,6 @@
 {
   "name": "syara-ui-vue",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "UI tools for Vue.js (2.x)",
   "main": "./dist/syara-ui.common.js",
   "files": [
