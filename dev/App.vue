@@ -57,13 +57,29 @@ export default {
         {
           text: 'Labels 0',
           labels: [
-            {field: 'albumId', byIndex:true, tooltipText: true}
+            {
+              field: 'albumId', byIndex:true, tooltipText: true, 
+              mapValues:{
+                1: {text:'test 1 just ot see if this could work', color: 'red'},
+                2: {text:'test 2'},
+                3: {text:'test 3'},
+                4: {text:'test 4'}
+              }
+            }
           ]
         },
         {
           text: 'Labels 1',
           labels: [
-            {field: 'albumId', byIndex:true}
+            {
+              field: 'albumId', byIndex:true, 
+              mapValues:{
+                1: {text:'Labels 1: test 1 just ot see if this could work', color: 'red'},
+                2: {text:'test 2'},
+                3: {text:'test 3'},
+                4: {text:'test 4'}
+              }
+            }
           ]
         },
         {

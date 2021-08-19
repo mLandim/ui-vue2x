@@ -108,20 +108,20 @@
 
                     <div v-for="(label, labelIndex) in column.labels" :key="labelIndex" class="syara-table-labels"  >
                       
-                      <template v-if="('byIndex' in label || 'tooltipText' in label) && labelsList">
+                      <template v-if="('byIndex' in label || 'tooltipText' in label) && 'mapValues' in label">
                         <!-- show text by id in label itself  -->
                         <span 
                         v-if="label.byIndex && ('tooltipText' in label === false || label.tooltipText === false)" 
-                        class="syara-table-label-index" :style="labelsList && `${line[label.field]}` in labelsList && 'color' in labelsList[line[label.field]] ? `background-color:${labelsList[line[label.field]].color}`: ''"
+                        class="syara-table-label-index" :style="label.mapValues && `${line[label.field]}` in label.mapValues && 'color' in label.mapValues[line[label.field]] ? `background-color:${label.mapValues[line[label.field]].color}`: ''"
                         >
-                        {{labelsList && `${line[label.field]}` in labelsList ? labelsList[line[label.field]].text : ' '}}
+                        {{label.mapValues && `${line[label.field]}` in label.mapValues ? label.mapValues[line[label.field]].text : ' '}}
                         </span>
                         <!-- text tooltip only  -->
                         <span 
                         v-else-if="label.byIndex && label.tooltipText" 
                         class="syara-table-label-index" 
-                        :class="labelsList ? 'tooltip-host': null" 
-                        :tool-tip-attr="labelsList && `${line[label.field]}` in labelsList  ? labelsList[line[label.field]].text : ' '">
+                        :class="label.mapValues ? 'tooltip-host': null" 
+                        :tool-tip-attr="label.mapValues && `${line[label.field]}` in label.mapValues  ? label.mapValues[line[label.field]].text : ' '">
                         {{line[label.field]}}
                         </span>
 
@@ -366,12 +366,7 @@ export default {
         required: false,
         default: null
       },
-      // List of labels that could be used at column with labels key
-      labelsList: {
-        type: Object,
-        required: false,
-        default: null
-      }
+      
 
     },
     data() {
@@ -1071,6 +1066,7 @@ table tbody tr td {
 .syara-table-labels span{
   position: relative;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-content: center;
   align-items: center;
@@ -1079,12 +1075,15 @@ table tbody tr td {
   background: #3A4859;
   color: #ffffff;
   margin: 0 2px;
+  word-wrap: break-word;
+  word-break: break-all;
 }
 
 
 .syara-table-label-index {
   position: relative;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-content: center;
   align-items: center;
@@ -1093,6 +1092,8 @@ table tbody tr td {
   background: #3A4859;
   color: #ffffff;
   margin: 0 2px;
+  word-wrap: break-word;
+  word-break: break-all;
 }
 
 
