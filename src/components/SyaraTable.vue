@@ -1168,30 +1168,37 @@ table tbody tr td .syara-table-labels:hover .tooltip-host::before {
     transform: translateX(-50%);
 } */
 /* :first-of-type */
-table tbody tr td .syara-table-labels:hover .tooltip-host::after {
+
+/* table tbody tr td */
+.syara-table-labels:hover .tooltip-host::after {
   content: attr(tool-tip-attr);
   position: absolute;
   display: flex;
   justify-content: center;
   align-content: center;
   align-items: center;
-  flex-wrap: wrap;
-  clear: both;
+  /* flex-wrap:wrap; */
+  /* clear: both; */
   top: calc(103% + 16px);
   left: 50%;
   transform: translateX(-50%);
-  min-width: 60px;
-  width: auto;
+  min-width: 100px;
+  max-width: 200px;
+  /* width: auto; */
   height: auto;
   background: #3A4859;
   border-radius: 6px;
   color: #ffffff;
+  font-size: 1rem;
+  line-height: 1.1rem;
   padding: 4px 8px;
   opacity: 0.9;
   z-index: 10;
+  word-wrap: normal;
+  word-break:keep-all;
 }
-
-table tbody tr td .syara-table-labels:hover .tooltip-host::before  {
+/* table tbody tr td  */
+.syara-table-labels:hover .tooltip-host::before  {
   content:'';
   display:block;
   width:0;
@@ -1222,14 +1229,19 @@ table tbody tr td .syara-table-labels:hover .tooltip-host::before  {
   bottom: calc(100% + 16px);
   left: 50%;
   transform: translateX(-50%);
-  min-width: 100%;
-  width: auto;
+  min-width: 100px;
+  max-width: 200px;
   background: #3A4859;
   border-radius: 6px;
   color: #ffffff;
   padding: 4px 8px;
   opacity: 0.9;
   z-index: 10;
+  font-size: 0.9rem;
+  font-weight: normal;
+  line-height: 0.9rem;
+  word-wrap: normal;
+  word-break:keep-all;
 }
 .header-tooltip:hover::before {
     content:'';

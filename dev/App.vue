@@ -61,7 +61,7 @@ export default {
             {
               field: 'albumId', byIndex:true, tooltipText: true, 
               mapValues:{
-                1: {text:'test 1 just ot see if this could work', color: 'red'},
+                1: {text:'test 1 just ot dfdfdfdfdfdfdfdfdf see if this could work', color: 'red'},
                 2: {text:'test 2'},
                 3: {text:'test 3'},
                 4: {text:'test 4'}
