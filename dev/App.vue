@@ -15,20 +15,21 @@
       @callbackFunctions="manageCallbackFunctions($event)" />
 
       <!-- :lineClick="'lineClickCallback'" -->
+      <!-- <TestForm /> -->
   </div>
 
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue'
+// import TestForm from './TestFormBase.vue'
 import axios from 'axios'
 
 export default {
   name: 'App',
   components: {
-    // HelloWorld
+    // TestForm
   },
-   data() {
+  data() {
     return {
     
       tHeader: [

@@ -1,6 +1,7 @@
 // Vue 2x 
 import Vue from 'vue'
-import App from './App.vue'
+// import App from './App.vue'
+import App from './TestFormBase.vue'
 import SyaraUi from '../src/index'
 
 console.log(SyaraUi)
