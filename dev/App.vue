@@ -56,12 +56,12 @@ export default {
         ] 
         },
         {
-          text: 'Labels 0',
+          text: 'Test Labels',
           labels: [
             {
               field: 'albumId', byIndex:true, tooltipText: true, 
               mapValues:{
-                1: {text:'test 1 just ot dfdfdfdfdfdfdfdfdf see if this could work', color: 'red'},
+                1: {text:'Example of tooltip label', color: 'red'},
                 2: {text:'test 2'},
                 3: {text:'test 3'},
                 4: {text:'test 4'}
@@ -70,7 +70,7 @@ export default {
           ]
         },
         {
-          text: 'Labels 1',
+          text: 'Test Labels 1',
           labels: [
             {
               field: 'albumId', byIndex:true, 
@@ -84,7 +84,7 @@ export default {
           ]
         },
         {
-          text: 'Labels 2',
+          text: 'Test Labels 2',
           labels: [
             {field: 'thumbnailUrl', color: '#FEB21E'}
           ]
