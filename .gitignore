@@ -3,7 +3,7 @@ node_modules
 /dist
 /private
 /bkp
-
+bkp
 
 # local env files
 .env.local

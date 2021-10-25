@@ -1,5 +1,5 @@
 <template>
-  <div class="syara-table-container" >
+  <div class="syara-table-container" :style="`padding:${padding}px;${(bodyHeight) ? '' : 'height: 100%'} `" >
 
     <!-- Table title  -->
     <div class="syara-table-title" v-if="title">
@@ -8,7 +8,7 @@
 
     <!-- Table : show only if header and body are correctly set    -->
     <!-- if no personal styles, class or theme are received, then use default theme  -->
-    <table v-if="header && body" :class="[ myClass ? myClass :  theme]">
+    <table v-if="header && body" :class="[ myClass ? myClass :  theme]" :style="`${(bodyHeight) ? '' : 'height: 100%'}`">
 
       <thead>
 
@@ -81,7 +81,7 @@
 
       </thead>
 
-      <tbody  :style=" bodyHeight ? 'height:'+bodyHeight+'px;' : 'height: auto;' ">
+      <tbody  :style=" bodyHeight ? 'height:'+bodyHeight+'px;' : 'height: calc(100% - 60px);' ">
 
         <!-- if loading is informed as true  -->
         <template v-if="bodyLoading">
@@ -92,7 +92,10 @@
           <template v-if="body">
 
             <!-- table line in v-for (loop) -->
-            <tr v-for="(line, indexLine) in finalBodyData" :key="indexLine" @click="lineClick ? clickLink(lineClick, line) : null" :style="lineClick ? 'cursor: pointer;' : ''">
+            <tr v-for="(line, indexLine) in finalBodyData" 
+            :key="indexLine" 
+            @click="lineClick ? clickLink(lineClick, line) : null" 
+            :style="`${lineClick ? 'cursor: pointer;' : '' } ${lineHeight ? 'min-height:'+lineHeight+'px' : ''}`">
 
               <td v-for="column in insideHeader" :key="column.id" :class="{'td-hover':column.asc!=null}" :style="column.style">
                 <!-- text and action for each cell in line  -->
@@ -100,10 +103,15 @@
                   <div class="syara-table-actions-container">
                     <div v-for="(action, actionIndex) in column.actions" :key="actionIndex" class="syara-table-actions"  @click="clickLink(action.callback, line)">
                       <span class="syara-table-actions-info" v-if="'info' in action">{{line[action.info]}}</span>
+                      <!-- pure SGV icon   -->
                       <div class="syara-table-actions-icon" v-if="'icon' in action" v-html="action.icon"></div>
+                      <!-- material design icon  -->
                       <div class="syara-table-actions-icon" v-if="'mdIcon' in action">
                         <span class="material-icons" :class="('mdIconSize' in action) ? `md-${action.mdIconSize}` : null">{{action.mdIcon}}</span>
                       </div>
+                      <!-- bootstrap icon  -->
+                      <b-icon v-if="'bootstrapIcon' in action" :icon="action.bootstrapIcon" :style="`width: 20px; height: 20px;`" ></b-icon>
+                      
                     </div>
                   </div>
                 </template>
@@ -114,22 +122,47 @@
                     <div v-for="(label, labelIndex) in column.labels" :key="labelIndex" class="syara-table-labels"  >
                       
                       <template v-if="('byIndex' in label || 'tooltipText' in label) && 'mapValues' in label">
+                        
                         <!-- show text by id in label itself  -->
-                        <span 
-                        v-if="label.byIndex && ('tooltipText' in label === false || label.tooltipText === false)" 
-                        class="syara-table-label-index" 
-                        :style="label.mapValues && `${line[label.field]}` in label.mapValues && 'color' in label.mapValues[line[label.field]] ? `background-color:${label.mapValues[line[label.field]].color};color:${fontColorFix(label.mapValues[line[label.field]].color)}`: ''"
-                        >
-                        {{label.mapValues && `${line[label.field]}` in label.mapValues ? label.mapValues[line[label.field]].text : ' '}}
-                        </span>
+                        <template v-if="label.byIndex && ('tooltipText' in label === false || label.tooltipText === false)">
+                          <!-- if field is array  -->
+                          <template v-if="Array.isArray(line[label.field])">
+                            <span v-for="(fieldItem, fieldItemIndex) in line[label.field]" :key="fieldItemIndex"
+                            class="syara-table-label-index" 
+                            :style="label.mapValues && `${fieldItem}` in label.mapValues && 'color' in label.mapValues[fieldItem] ? `background-color:${label.mapValues[fieldItem].color};color:${fontColorFix(label.mapValues[fieldItem].color)}`: ''" >
+                            {{label.mapValues && `${fieldItem}` in label.mapValues ? label.mapValues[fieldItem].text : ' '}}
+                            </span>
+                          </template>
+                          <!-- if is text  -->
+                          <span v-else
+                          class="syara-table-label-index" 
+                          :style="label.mapValues && `${line[label.field]}` in label.mapValues && 'color' in label.mapValues[line[label.field]] ? `background-color:${label.mapValues[line[label.field]].color};color:${fontColorFix(label.mapValues[line[label.field]].color)}`: ''" >
+                          {{label.mapValues && `${line[label.field]}` in label.mapValues ? label.mapValues[line[label.field]].text : ' '}}
+                          </span>
+
+                        </template>
+
                         <!-- text tooltip only  -->
-                        <span 
-                        v-else-if="label.byIndex && label.tooltipText" 
-                        class="syara-table-label-index" 
-                        :class="label.mapValues ? 'tooltip-host': null" 
-                        :tool-tip-attr="label.mapValues && `${line[label.field]}` in label.mapValues  ? label.mapValues[line[label.field]].text : ' '">
-                        {{line[label.field]}}
-                        </span>
+                        <template v-else-if="label.byIndex && label.tooltipText">
+                          <!-- if field is array  -->
+                          <template v-if="Array.isArray(line[label.field])">
+                            <span v-for="(fieldItem, fieldItemIndex) in line[label.field]" :key="fieldItemIndex"
+                            class="syara-table-label-index" 
+                            :class="label.mapValues ? 'tooltip-host': null" 
+                            :tool-tip-attr="label.mapValues && `${fieldItem}` in label.mapValues  ? label.mapValues[fieldItem].text : ' '">
+                            {{fieldItem}}
+                            </span>
+                          </template>
+                          <!-- if is text  -->
+                          <span v-else
+                          class="syara-table-label-index" 
+                          :class="label.mapValues ? 'tooltip-host': null" 
+                          :tool-tip-attr="label.mapValues && `${line[label.field]}` in label.mapValues  ? label.mapValues[line[label.field]].text : ' '">
+                          {{line[label.field]}}
+                          </span>
+
+                        </template>
+                       
 
                       </template>
                       <!-- show only the value of field  -->
@@ -278,7 +311,7 @@
 </template>
 
 <script>
-import {v4 as uuidv4 } from 'uuid'
+
 
 export default {
     name:'SyTable',
@@ -313,6 +346,16 @@ export default {
         type: Number,
         required: false,
         default: null
+      },
+      lineHeight: {
+        type: Number,
+        required: false,
+        default: null
+      },
+      padding: {
+        type: Number,
+        required: false,
+        default: 10
       },
       // text shown when there is no data 
       bodyErrorText: {
@@ -381,7 +424,7 @@ export default {
 
         // Default options of every column
         templateHeaderColumn: {
-          id: uuidv4(),
+          id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + new Date().valueOf(),
           text: '',
           filter: false,
           filterText: '',
@@ -507,6 +550,10 @@ export default {
     },
     methods:{
 
+      falseRandom(value) {
+        return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + `${value}`
+      },
+
       fontColorFix(backgroundColor) {
 
         // if (this.value === 0) return '#3A4859'
@@ -532,7 +579,7 @@ export default {
         const headerLen = this.header.length
         for (let index = 0; index < headerLen; index++) {
           const element = this.header[index];
-          'id' in element ? this.templateHeaderColumn.id = element.id : this.templateHeaderColumn.id = uuidv4()
+          'id' in element ? this.templateHeaderColumn.id = element.id : this.templateHeaderColumn.id = this.falseRandom(index)
           const newElement = {...this.templateHeaderColumn, ...element}
           this.insideHeader.push(newElement)
 
@@ -969,7 +1016,7 @@ fonts
   align-content: center;
   align-items: center;
   width: 100%;
-  padding: 10px;
+  /* padding: 10px; */
   box-sizing: border-box;
   font-family: 'Futura Normal', Helvetica, Arial, sans-serif;
 
@@ -979,25 +1026,38 @@ fonts
   display: none;
 }
 
-.syara-table-container > table {
+/* .syara-table-container > table {
   position: relative;
   width: 100%;
-}
+} */
 
-table {
+.syara-table-container > table {
   text-align: center;
   max-width: 100%;
 }
 
-table thead tr th {
+.syara-table-container > table thead tr {
+  height: 30px;
+}
+
+.syara-table-container > table thead tr th {
   padding: 3px;
 }
-table tbody tr td {
+.syara-table-container > table tbody tr {
+  min-height: 20px;
+}
+.syara-table-container > table tbody tr td {
   padding: 3px;
   word-wrap: break-word;
 }
 
+.syara-table-container > table tfoot {
+  height: 30px;
+}
 
+.syara-table-container > table tfoot tr{
+  height: 28px;
+}
 
 
 .header-filter {
@@ -1092,6 +1152,16 @@ table tbody tr td {
   box-sizing: border-box;
 }
 
+.syara-table-labels {
+  position: relative;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}
+
 .syara-table-labels span{
   position: relative;
   display: flex;
@@ -1103,7 +1173,7 @@ table tbody tr td {
   border-radius: 6px;
   background: #3A4859;
   color: #ffffff;
-  margin: 0 2px;
+  margin:2px;
   word-wrap: break-word;
   word-break: break-all;
 }
@@ -1120,7 +1190,7 @@ table tbody tr td {
   border-radius: 6px;
   background: #3A4859;
   color: #ffffff;
-  margin: 0 2px;
+  margin:2px;
   word-wrap: break-word;
   word-break: break-all;
 }
@@ -1170,6 +1240,8 @@ table tbody tr td .syara-table-labels:hover .tooltip-host::before {
 /* :first-of-type */
 
 /* table tbody tr td */
+
+/* 
 .syara-table-labels:hover .tooltip-host::after {
   content: attr(tool-tip-attr);
   position: absolute;
@@ -1177,14 +1249,11 @@ table tbody tr td .syara-table-labels:hover .tooltip-host::before {
   justify-content: center;
   align-content: center;
   align-items: center;
-  /* flex-wrap:wrap; */
-  /* clear: both; */
   top: calc(103% + 16px);
   left: 50%;
   transform: translateX(-50%);
   min-width: 100px;
   max-width: 200px;
-  /* width: auto; */
   height: auto;
   background: #3A4859;
   border-radius: 6px;
@@ -1197,7 +1266,7 @@ table tbody tr td .syara-table-labels:hover .tooltip-host::before {
   word-wrap: normal;
   word-break:keep-all;
 }
-/* table tbody tr td  */
+
 .syara-table-labels:hover .tooltip-host::before  {
   content:'';
   display:block;
@@ -1213,6 +1282,60 @@ table tbody tr td .syara-table-labels:hover .tooltip-host::before {
   left: 50%;
   transform: translateX(-50%);
 }
+ */
+
+
+
+
+.tooltip-host:hover:after {
+  content: attr(tool-tip-attr);
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  top: calc(103% + 16px);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 100px;
+  max-width: 200px;
+  height: auto;
+  background: #3A4859;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 1rem;
+  line-height: 1.1rem;
+  padding: 4px 8px;
+  opacity: 0.9;
+  z-index: 10;
+  word-wrap: normal;
+  word-break:keep-all;
+}
+
+.tooltip-host:hover:before  {
+  content:'';
+  display:block;
+  width:0;
+  height:0;
+  position: absolute;
+  border-top: 8px solid transparent ;
+  border-bottom: 8px solid #3A4859   ;
+  border-right: 8px solid transparent ;
+  border-left: 8px solid transparent ;
+  opacity: 0.9; 
+  top: 103%;
+  left: 50%;
+  transform: translateX(-50%);
+} 
+
+
+
+
+/******************************************************
+
+header tooltip
+
+******************************************************/
 
 .header-tooltip{
   position: relative;
@@ -1258,6 +1381,16 @@ table tbody tr td .syara-table-labels:hover .tooltip-host::before {
     left: 50%;
     transform: translateX(-50%);
 } 
+
+
+
+
+
+/******************************************************
+
+footer
+
+******************************************************/
 
 
 .footer-pages {
@@ -1321,7 +1454,7 @@ thead styles
 
 .syara-light > thead > tr{
 
-    height: 30px;
+    
     max-height: auto;
     font-size: 1em;
     
@@ -1550,7 +1683,7 @@ tbody styles
 
 .syara-light > tfoot{
     display: block;
-    height: 30px;
+    
     background-color: #D0E0E3;
     border-top: 1px solid #B3C7CB;
     box-sizing: border-box;
@@ -1558,7 +1691,7 @@ tbody styles
 
 .syara-light > tfoot tr{
     display: table;
-    height: 28px;
+    /* height: 28px; */
     width: 100%;
     background-color: #D0E0E3;
     box-sizing: border-box;
